@@ -8,15 +8,8 @@
         url: function () {
             return this.urlRoot + '?rpc=' + this.get('devId');
         },
-		update: function () {
-			this.fetch();
-			this.set();
-		},
 		initialize: function () {
-			setInterval(function () { 
-				this.update;
-				console.log("something");
-			}, 3000);
+
 		}
     });
     
@@ -63,11 +56,8 @@
 			});
 			$("#main").append(newMiner.$el.html());
 		},
-		test: function () {
-			console.log("idunno");
-		},
 		initialize: function() {
-			this.listenTo(this.model, 'change', this.test);
+			this.listenTo(this.model, 'change', this.render);
 		}
 	});
 
@@ -77,7 +67,6 @@
 	 */
     PrimaryDisplay = Backbone.View.extend({
 		addMiner: function(minermodel) {
-			console.log(minermodel);
 			newMiner = new DisplayMiner({model: minermodel});
 		},
 		render: function () {
