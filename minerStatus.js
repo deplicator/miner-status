@@ -1,22 +1,28 @@
 ﻿$(document).ready(function () {
 
-    Backbone.emulateHTTP = true;
-    Backbone.emulateJSON = true;
-
-    var Miner = Backbone.Model.extend({
+	/**
+	 * Individual miner model used for each device that is mining.
+	 */
+    Miner = Backbone.Model.extend({
         urlRoot: "bfgapi.php",
         url: function () {
-            console.log(this.urlRoot + '?rpc=' + this.get('devId'));
             return this.urlRoot + '?rpc=' + this.get('devId');
         },
+		update: function () {
+			this.fetch();
+			this.set();
+		},
 		initialize: function () {
-            this.on('all', function (e) {
-                console.log("Miner event: " + e);
-            });
-        }
+			setInterval(function () { 
+				this.update;
+				console.log("something");
+			}, 3000);
+		}
     });
     
-    
+    /**
+	 * Collection of all miners.
+	 */
     var MinerCollection = Backbone.Collection.extend({
         model: Miner,
         pollDevices: function () {
@@ -35,18 +41,8 @@
                 }
             });
         },
-		startUpdating: function(interval) {
-			this.going = setInterval(this.pollDevices, interval)
-		},
-		pauseUpdating: function () {
-			clearInterval(this.going);
-		},
 		initialize: function () {
-            this.on('all', function (e) {
-                console.log("MinerCollection event: " + e);
-            });
 			this.pollDevices();
-			//this.startUpdating(3000);
         }
     });
     
@@ -59,23 +55,29 @@
 		render: function () {
 			modelasjson = this.model.toJSON();
 			stuff = modelasjson.objId;
+			$('#' + stuff).remove();
+			this.$el.html('<ul id="' + stuff + '" class="miner">');
 			temp = this.$el
 			_.each(modelasjson[stuff], function (val, key) {
-				temp.append('<li>' + key + ' - ' + val +'</li>');
+				temp.children().append('<li>' + key + ' - ' + val +'</li>');
 			});
-			$("#main").append(newMiner.$el.html());			
+			$("#main").append(newMiner.$el.html());
+		},
+		test: function () {
+			console.log("idunno");
 		},
 		initialize: function() {
-			this.listenTo(this.model, 'change', this.render);
+			this.listenTo(this.model, 'change', this.test);
 		}
 	});
-	
-	
+
+
 	/**
 	 * Main application display.
 	 */
     PrimaryDisplay = Backbone.View.extend({
 		addMiner: function(minermodel) {
+			console.log(minermodel);
 			newMiner = new DisplayMiner({model: minermodel});
 		},
 		render: function () {
