@@ -13,9 +13,20 @@ ul {
 }
 
 li {
+	display: block;
+	height: 18px;
 	padding: 1px 5px;
 }
 
 li:nth-child(even) {
 	background: gainsboro;
+}
+
+.key {
+	float: left;
+}
+
+.value {
+	float: right;
+	font-weight: 700;
 }
