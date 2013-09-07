@@ -1,32 +1,55 @@
 ﻿html,
 body {
-	font-family: 'Courier New', Courier, monospace
+    font-family: 'Courier New', Courier, monospace
 }
 
 ul {
-	border: 1px solid;
-	border-radius: 5px;
-	float: left;
-	list-style-type: none;
-	margin: 5px;
-	padding: 0;
+    border: 1px solid;
+    border-radius: 5px;
+    float: left;
+    list-style-type: none;
+    margin: 5px;
+    padding: 1px;
 }
 
-li {
-	display: block;
-	height: 18px;
-	padding: 1px 5px;
+.rig {
+    float: none;
 }
 
-li:nth-child(even) {
-	background: gainsboro;
+.rig li {
+    display: block;
+    height: 18px;
+    padding: 1px 5px;
 }
 
-.key {
-	float: left;
+.rig li:nth-child(even) {
+    background: gainsboro;
 }
 
-.value {
-	float: right;
-	font-weight: 700;
+.rig .key {
+    float: left;
+}
+
+.rig .value {
+    float: right;
+    font-weight: 700;
+}
+
+.miner li {
+    display: block;
+    height: 18px;
+    padding: 1px 5px;
+}
+
+.miner li:nth-child(even) {
+    background: gainsboro;
+}
+
+.miner .key {
+    float: left;
+}
+
+.miner .value {
+    float: right;
+    font-weight: 700;
 }

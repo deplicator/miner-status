@@ -1,17 +1,39 @@
-﻿Rig = Backbone.Model.extend({
-    urlRoot: "bfgapi.php",
+﻿/**
+ * Model for mining rig statistics.
+ */
+Rig = Backbone.Model.extend({
+    defaults: {
+        lastUpdated: '',
+        updateCount: 0
+    },
+    update: function () {
+        this.set('lastUpdated', Date.now());
+        currentCount = this.get('updateCount');
+        this.set('updateCount', ++currentCount);
+        this.fetch();
+    },
+    updateAuto: function (interval) {
+        var self = this;
+        this.updating = setInterval(function () {
+            self.update();
+        }, interval);
+    },
+    updatePause: function () {
+        clearInterval(this.updating);
+    },
+    urlRoot: "scripts/bfgapi.php",
     url: function () {
         return this.urlRoot + '?rpc=summary';
     },
     initialize: function () {
-        console.log("rig init")
+        this.updateAuto(3000);
     }
 });
 
 /**
  * Model of minier statistics.
  */
-Miner = Backbone.Model.extend({
+var Miner = Backbone.Model.extend({
     defaults: {
         urlId: 'n/a',
         objId: 'n/a',
@@ -24,7 +46,7 @@ Miner = Backbone.Model.extend({
         this.set('updateCount', ++currentCount);
         this.fetch();
     },
-    urlRoot: "bfgapi.php",
+    urlRoot: "scripts/bfgapi.php",
     url: function () {
         return this.urlRoot + '?rpc=' + this.get('urlId');
     },
@@ -47,7 +69,7 @@ var MinerCollection = Backbone.Collection.extend({
             async: false,
             type: 'get',
             datatype: 'json',
-            url: 'bfgapi.php?rpc=devdetail',
+            url: 'scripts/bfgapi.php?rpc=devdetail',
             success: function (data) {
                 _(data).chain().omit('STATUS').keys().each(function (id) {
                     var parsed = id.slice(0,3).toLowerCase() + '|' + id.slice(3);
@@ -66,30 +88,53 @@ var MinerCollection = Backbone.Collection.extend({
             });
         });
     },
-    updateAll: function () {
-        this.each(function (e) {
-            e.update();
-        });
+    updateAll: function (interval) {
+        var self = this;
+        this.updating = setInterval(function () {
+            self.each(function (e) {
+                e.update();
+            });
+        }, interval);
+    },
+    updatePause: function () {
+        clearInterval(this.updating);
     },
     initialize: function () {
-        var self = this;
-        going = setInterval(function () {
-            self.updateAll()
-        }, 3000);
+        this.updateAll(3000);
     }
 });
 
 /**
- * Display status for single miner.
+ * Display for rig.
  */
-DisplayMiner = Backbone.View.extend({
+var DisplayRig = Backbone.View.extend({
     render: function () {
         var self = this;
         modelasjson = this.model.toJSON();
+        $('#summary li').each().remove();
+        this.$el.html('<ul id="summary" class="rig">');
+        var temp = this.$el
+        _.each(modelasjson['SUMMARY'], function (val, key) {
+            temp.children().append('<li><div class="key">' + key + ':</div><div class="value">' + val +'</div></li>');
+        });
+        $("#main").append(self.$el.html());
+    },
+    initialize: function () {
+        this.listenTo(this.model, 'change', this.render);
+    }
+})
+
+/**
+ * Display status for single miner.
+ */
+var DisplayMiner = Backbone.View.extend({
+    render: function () {
+        var self = this;
+        var modelasjson = this.model.toJSON();
         var id = modelasjson.objId;
         $('#' + id).remove();
         this.$el.html('<ul id="' + id + '" class="miner">');
-        temp = this.$el
+        var temp = this.$el
         temp.children().append(modelasjson.lastUpdated);
         _.each(modelasjson[id], function (val, key) {
             temp.children().append('<li><div class="key">' + key + ':</div><div class="value">' + val +'</div></li>');
@@ -104,7 +149,7 @@ DisplayMiner = Backbone.View.extend({
 /**
  * Main application display.
  */
-PrimaryDisplay = Backbone.View.extend({
+var PrimaryDisplay = Backbone.View.extend({
     addMiner: function(minermodel) {
         var newMiner = new DisplayMiner({model: minermodel});
     },
@@ -112,10 +157,15 @@ PrimaryDisplay = Backbone.View.extend({
         $('#main').show();
     },
     updateFrequency: function (interval) {
-        setInterval(Miners.updateAll, 3000);
+        Miners.updateAll(interval);
+    },
+    updatePause: function () {
+        Miners.updatePause();
     },
     initialize: function () {
-        Miners = new MinerCollection();
+        MiningRig = new DisplayRig({model: new Rig()});
+        
+        var Miners = new MinerCollection();
         this.listenTo(Miners, 'add', this.addMiner);
         Miners.createAll();
         this.render();
