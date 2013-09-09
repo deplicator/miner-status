@@ -114,14 +114,14 @@ var DisplayRig = Backbone.View.extend({
         $('#summary').children().each(function () {
             $(this).remove();
         });
-
+        this.$el.children('ul').append('<h2>SUMMARY</h2>');
         _.each(modelasjson['SUMMARY'], function (val, key) {
             self.$el.children('ul').append('<li><div class="key">' + key + ':</div><div class="value">' + val +'</div></li>');
         });
         $("#main").append(self.$el);
     },
     initialize: function () {
-        this.$el.html('<ul id="summary" class="rig">');
+        this.$el.html('<ul id="summary" class="rig"></ul>');
         this.listenTo(this.model, 'change', this.render);
         this.model.updateAuto(3000);
     }
