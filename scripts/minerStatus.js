@@ -1,15 +1,15 @@
 ﻿/**
  * Model for mining rig statistics.
  */
-Rig = Backbone.Model.extend({
+var Rig = Backbone.Model.extend({
     defaults: {
         lastUpdated: '',
         updateCount: 0
     },
     update: function () {
-        this.set('lastUpdated', Date.now());
-        currentCount = this.get('updateCount');
-        this.set('updateCount', ++currentCount);
+        // this.set('lastUpdated', Date.now());
+        // currentCount = this.get('updateCount');
+        // this.set('updateCount', currentCount + 1);
         this.fetch();
     },
     updateAuto: function (interval) {
@@ -26,7 +26,7 @@ Rig = Backbone.Model.extend({
         return this.urlRoot + '?rpc=summary';
     },
     initialize: function () {
-        this.updateAuto(3000);
+        this.update();
     }
 });
 
@@ -110,17 +110,20 @@ var MinerCollection = Backbone.Collection.extend({
 var DisplayRig = Backbone.View.extend({
     render: function () {
         var self = this;
-        modelasjson = this.model.toJSON();
-        $('#summary li').each().remove();
-        this.$el.html('<ul id="summary" class="rig">');
-        var temp = this.$el
-        _.each(modelasjson['SUMMARY'], function (val, key) {
-            temp.children().append('<li><div class="key">' + key + ':</div><div class="value">' + val +'</div></li>');
+        var modelasjson = this.model.toJSON();
+        $('#summary').children().each(function () {
+            $(this).remove();
         });
-        $("#main").append(self.$el.html());
+
+        _.each(modelasjson['SUMMARY'], function (val, key) {
+            self.$el.children('ul').append('<li><div class="key">' + key + ':</div><div class="value">' + val +'</div></li>');
+        });
+        $("#main").append(self.$el);
     },
     initialize: function () {
+        this.$el.html('<ul id="summary" class="rig">');
         this.listenTo(this.model, 'change', this.render);
+        this.model.updateAuto(3000);
     }
 })
 
