@@ -29,6 +29,7 @@ li:last-child {
 .rig {
     border: 2px solid;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.44);
+    height: 461px;
     float: none;
 }
 

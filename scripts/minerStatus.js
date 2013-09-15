@@ -14,6 +14,7 @@ var Rig = Backbone.Model.extend({
     },
     updateAuto: function (interval) {
         var self = this;
+        this.update();
         this.updating = setInterval(function () {
             self.update();
         }, interval);
@@ -26,7 +27,7 @@ var Rig = Backbone.Model.extend({
         return this.urlRoot + '?rpc=summary';
     },
     initialize: function () {
-        this.update();
+        this.updateAuto(3000);
     }
 });
 
@@ -79,7 +80,7 @@ var MinerCollection = Backbone.Collection.extend({
         });
         return deviceList;
     },
-    createAll: function () {        
+    createAll: function () {
         var self = this;
         var dev = this.devices();
         dev.forEach(function (id) { 
@@ -98,6 +99,14 @@ var MinerCollection = Backbone.Collection.extend({
     },
     updatePause: function () {
         clearInterval(this.updating);
+    },
+    collective5s: function () {
+        var self = this;
+        result = 0;
+        this.each(function (miner) {
+            result += parseInt(miner.attributes[miner.attributes.objId]['MHS 5s'], 10);
+        });
+        return result
     },
     initialize: function () {
         this.updateAll(3000);
@@ -121,9 +130,9 @@ var DisplayRig = Backbone.View.extend({
         $("#main").append(self.$el);
     },
     initialize: function () {
-        this.$el.html('<ul id="summary" class="rig"></ul>');
+        this.$el.append('<ul id="summary" class="rig"></ul>');
         this.listenTo(this.model, 'change', this.render);
-        this.model.updateAuto(3000);
+        this.render();
     }
 })
 
@@ -153,46 +162,49 @@ var DisplayMiner = Backbone.View.extend({
  * Main application display.
  */
 var PrimaryDisplay = Backbone.View.extend({
+    events: {
+        'click #pause' : 'updatePauseButton'
+    },
     addMiner: function(minermodel) {
         var newMiner = new DisplayMiner({model: minermodel});
     },
     render: function () {
         $('#main').show();
+        $('#error').hide();
     },
     updateFrequency: function (interval) {
+        MiningRig.model.updateAuto(interval);
         Miners.updateAll(interval);
     },
     updatePause: function () {
+        MiningRig.model.updatePause();
         Miners.updatePause();
     },
-    initialize: function () {
-        MiningRig = new DisplayRig({model: new Rig()});
+    updatePauseButton: function () {
+        if ($('#pause').val() === 'pause updating') {
+            this.updatePause();
+            $('#pause').val('resume updating');
+        } else {
+            this.updateFrequency(3000);
+            $('#pause').val('pause updating');
+        }
         
-        var Miners = new MinerCollection();
+    },
+    initialize: function () {
+        $('#main').append('<input id="pause" type="button" value="pause updating">');
+
+        MiningRig = new DisplayRig({model: new Rig()});
+        Miners = new MinerCollection();
+        
         this.listenTo(Miners, 'add', this.addMiner);
+        
         Miners.createAll();
         this.render();
     }
 });
 
+
 // Get this party started.
 $(document).ready(function () {
-    app = new PrimaryDisplay;
+    start = new PrimaryDisplay({el: $("#main")});
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
