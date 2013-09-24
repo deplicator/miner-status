@@ -27,7 +27,7 @@ var Rig = Backbone.Model.extend({
         return this.urlRoot + '?rpc=summary';
     },
     initialize: function () {
-        this.updateAuto(3000);
+        //this.updateAuto(3000);
     }
 });
 

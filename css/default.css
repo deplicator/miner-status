@@ -70,3 +70,15 @@ li:last-child {
     float: right;
     font-weight: 700;
 }
+
+.key {
+width: 315px;
+float: left;
+text-align: right;
+}
+
+.value {
+text-align: right;
+width: 80px;
+float: left;
+}

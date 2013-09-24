@@ -8,14 +8,14 @@
   }
 });
 
-define(['jquery', 'underscore', 'backbone', 'rig', 'miners'], function() {
+define(['jquery', 'underscore', 'backbone', 'blockdata', 'rig', 'miners'], function() {
 
     /**
      * Main application display.
      */
     var PrimaryDisplay = Backbone.View.extend({
         events: {
-            'click #pause' : 'updatePauseButton'
+            'click #pause': 'updatePauseButton'
         },
         addMiner: function(minermodel) {
             var newMiner = new DisplayMiner({model: minermodel});
@@ -25,11 +25,11 @@ define(['jquery', 'underscore', 'backbone', 'rig', 'miners'], function() {
             $('#error').hide();
         },
         updateFrequency: function (interval) {
-            MiningRig.model.updateAuto(interval);
+            //MiningRig.model.updateAuto(interval);
             Miners.updateAll(interval);
         },
         updatePause: function () {
-            MiningRig.model.updatePause();
+            //MiningRig.model.updatePause();
             Miners.updatePause();
         },
         updatePauseButton: function () {
@@ -45,7 +45,7 @@ define(['jquery', 'underscore', 'backbone', 'rig', 'miners'], function() {
         initialize: function () {
             $('#main').append('<input id="pause" type="button" value="pause updating">');
 
-            MiningRig = new DisplayRig({model: new Rig()});
+            //MiningRig = new DisplayRig({model: new Rig()});
             Miners = new MinerCollection();
             
             this.listenTo(Miners, 'add', this.addMiner);
@@ -60,5 +60,5 @@ define(['jquery', 'underscore', 'backbone', 'rig', 'miners'], function() {
     $(document).ready(function () {
         start = new PrimaryDisplay({el: $("#main")});
     });
-
+    
 });
