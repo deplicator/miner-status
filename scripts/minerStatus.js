@@ -21,8 +21,7 @@ define(['jquery', 'underscore', 'backbone', 'blockdata', 'rig', 'miners'], funct
             var newMiner = new DisplayMiner({model: minermodel});
         },
         render: function () {
-            $('#main').show();
-            $('#error').hide();
+            $('#main').append('<input id="pause" type="button" value="pause updating">');
         },
         updateFrequency: function (interval) {
             //MiningRig.model.updateAuto(interval);
@@ -43,9 +42,9 @@ define(['jquery', 'underscore', 'backbone', 'blockdata', 'rig', 'miners'], funct
             
         },
         initialize: function () {
-            $('#main').append('<input id="pause" type="button" value="pause updating">');
-
-            //MiningRig = new DisplayRig({model: new Rig()});
+            
+            BlockInfo = new DisplayBlockData({model: new BlockData()});
+            MiningRig = new DisplayRig({model: new Rig()});
             Miners = new MinerCollection();
             
             this.listenTo(Miners, 'add', this.addMiner);

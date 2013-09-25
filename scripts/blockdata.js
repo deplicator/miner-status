@@ -60,7 +60,8 @@ var DisplayBlockData = Backbone.View.extend({
         var self = this;
         var modelasjson = this.model.toJSON();
         
-        this.$el.append('<ul id="blockdata"></ul>');
+        this.$el.attr("id", "blockdata");
+        this.$el.append('<ul></ul>');
         this.$el.find("ul").append('<li id="endofblockchain"><span class="key">Last Block in Chain:</span><span class="value"></span></ul>');
         this.$el.find("ul").append('<li id="currentblock"><span class="key">Current Block:</span><span class="value"></span></ul>');
         this.$el.find("ul").append('<li id="blocksuntilchange"><span class="key">Blocks Until Difficulty Change:</span><span class="value"></span></ul>');
