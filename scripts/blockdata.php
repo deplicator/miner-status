@@ -13,8 +13,11 @@ function get_data($url) {
 }
 
 $array = array(
+    "currentdifficulty" => get_data("http://blockexplorer.com/q/getdifficulty"),
+    "currentend" => get_data("http://blockexplorer.com/q/nextretarget"),
     "currentblock" => get_data("http://blockexplorer.com/q/getblockcount"),
-    "endofblockchain" => get_data("http://blockexplorer.com/q/nextretarget")
+    "estimateddifficulty" => get_data("http://blockexplorer.com/q/estimate"),
+    "estimatedtime" => get_data("http://blockexplorer.com/q/eta")
 );
 
 print_r(json_encode($array));

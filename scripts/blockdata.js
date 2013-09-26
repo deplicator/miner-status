@@ -3,27 +3,22 @@
  */
 BlockData = Backbone.Model.extend({
     defaults: {
-        //finalblock: 6929999 + 1,
-        //blocksuntilfinish: 0,
-        endofblockchain: 0,
+        currentdifficulty: 0,
+        currentend: 0,
         currentblock: 0,
-        blocksuntilchange: 0
+        blocksuntilchange: 0,
         
+        estimateddifficulty: 0,
+        estimatedtime: 0,
     },
     blockstodifficultychange: function () {
         var cb = this.get("currentblock");
-        var eb = this.get("endofblockchain");
+        var eb = this.get("currentend");
         this.set("blocksuntilchange", parseInt(eb) - parseInt(cb));
-    },
-    blockstopayoutfinish: function () {
-        var cb = this.get("currentblock");
-        var fb = this.get("finalblock");
-        this.set("blocksuntilfinish", parseInt(fb) - parseInt(cb));
     },
     update: function () {
         this.fetch();
         this.blockstodifficultychange();
-        //this.blockstopayoutfinish();
     },
     updateAuto: function (interval) {
         var self = this;
@@ -48,11 +43,30 @@ BlockData = Backbone.Model.extend({
  * Display for block data.
  */
 var DisplayBlockData = Backbone.View.extend({
+    formatNumber: function (x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+    formatTime: function (seconds) {
+        now = Date.now();
+        milliseconds = parseInt(seconds) * 1000;
+        then = new Date(now + parseInt(milliseconds));
+
+        return then.getFullYear() + "-" + (parseInt(then.getMonth(), 10) + 1) + "-" + then.getDate() + " " + then.getHours() + ":" + then.getMinutes();
+    },
     render: function () {
         var self = this;
         var modelasjson = this.model.toJSON();
         _.each(modelasjson, function (val, key) {
-            self.$el.find("#" + key + ' .value').html(val);
+            if (self.$el.find("#" + key).hasClass("time")) {
+                self.$el.find("#" + key + " .value").html('<a title="' + val + '">' + self.formatTime((val)) + '</a>');
+            } else {
+                if (val < 1000000) {
+                    self.$el.find("#" + key + " .value").html(self.formatNumber(Math.round(val)));
+                } else {
+                    var newval = val / 1000000;
+                    self.$el.find("#" + key + " .value").html(Math.round(newval * 10) / 10 + " mil");
+                }
+            }
         });
         $("#main").append(self.$el);
     },
@@ -61,10 +75,19 @@ var DisplayBlockData = Backbone.View.extend({
         var modelasjson = this.model.toJSON();
         
         this.$el.attr("id", "blockdata");
-        this.$el.append('<ul></ul>');
-        this.$el.find("ul").append('<li id="endofblockchain"><span class="key">Last Block in Chain:</span><span class="value"></span></ul>');
-        this.$el.find("ul").append('<li id="currentblock"><span class="key">Current Block:</span><span class="value"></span></ul>');
-        this.$el.find("ul").append('<li id="blocksuntilchange"><span class="key">Blocks Until Difficulty Change:</span><span class="value"></span></ul>');
+        this.$el.append("<h2>blockdata</h2>");
+        
+        this.$el.append("<div id=\"chain\"></div>");
+        this.$el.find("#chain").append("<h3>Curent Chain</h3>");
+        this.$el.find("#chain").append('<div id="currentdifficulty"><span class="key">Difficulty:</span><span class="value"></span></div>');
+        this.$el.find("#chain").append('<div id="currentend"><span class="key">End Block:</span><span class="value"></span></div>');
+        this.$el.find("#chain").append('<div id="currentblock"><span class="key">Current Block:</span><span class="value"></span></div>');
+        this.$el.find("#chain").append('<div id="blocksuntilchange"><span class="key">Remaining:</span><span class="value"></span></div>');
+        
+        this.$el.append("<div id=\"estimates\"></div>");
+        this.$el.find("#estimates").append("<h3>Estimates</h3>");
+        this.$el.find("#estimates").append('<div id="estimateddifficulty"><span class="key">Next Difficulty:</span><span class="value"></span></div>');
+        this.$el.find("#estimates").append('<div id="estimatedtime" class="time"><span class="key">Time to next:</span><span class="value"></span></div>');
 
         this.listenTo(this.model, "change", this.render);
         this.render();

@@ -5,10 +5,6 @@ body {
     font-family: 'Courier New', Courier, monospace
 }
 
-h2 {
-    margin: 10px 0 0 10px;
-}
-
 .rig {
     border: 2px solid;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.44);
@@ -73,22 +69,69 @@ h2 {
 }
 
 #blockdata {
-    background: #222;
-    border: none;
-    float: none;
-    padding: 0;
-    margin: 0;
+    color: #dedede;
     width: 100%;
 }
 
-#blockdata .key {
-width: 315px;
-float: left;
-text-align: right;
+#blockdata h2{
+    text-align: center;
 }
 
-#blockdata  .value {
-text-align: right;
-width: 80px;
-float: left;
+#blockdata h3 {
+    text-align: center;
+    text-decoration: underline;
+}
+
+#blockdata .key {
+    display: block;
+    float: left;
+    text-align: right;
+    width:60%;
+}
+
+#blockdata .value {
+    font-weight: 700;
+    width: 95px;
+    display: block;
+    float: left;
+    text-align: right;
+}
+
+#chain {
+    background-image: linear-gradient(top, #4D4D4D 0%, #000000 100%);
+    background-image: -o-linear-gradient(top, #4D4D4D 0%, #000000 100%);
+    background-image: -moz-linear-gradient(top, #4D4D4D 0%, #000000 100%);
+    background-image: -webkit-linear-gradient(top, #4D4D4D 0%, #000000 100%);
+    background-image: -ms-linear-gradient(top, #4D4D4D 0%, #000000 100%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0, #4D4D4D),
+        color-stop(1, #000000)
+    );
+
+    float: left;
+    min-width: 300px;
+    width: 50%;
+}
+
+#estimates {
+    float: right;
+    width: 50%;
+    
+    background-image: linear-gradient(top, #000000 0%, #4D4D4D 100%);
+    background-image: -o-linear-gradient(top, #000000 0%, #4D4D4D 100%);
+    background-image: -moz-linear-gradient(top, #000000 0%, #4D4D4D 100%);
+    background-image: -webkit-linear-gradient(top, #000000 0%, #4D4D4D 100%);
+    background-image: -ms-linear-gradient(top, #000000 0%, #4D4D4D 100%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0, #000000),
+        color-stop(1, #4D4D4D)
+    );
 }

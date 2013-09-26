@@ -44,8 +44,8 @@ define(['jquery', 'underscore', 'backbone', 'blockdata', 'rig', 'miners'], funct
         initialize: function () {
             
             BlockInfo = new DisplayBlockData({model: new BlockData()});
-            MiningRig = new DisplayRig({model: new Rig()});
-            Miners = new MinerCollection();
+            //MiningRig = new DisplayRig({model: new Rig()});
+            //Miners = new MinerCollection();
             
             this.listenTo(Miners, 'add', this.addMiner);
             
